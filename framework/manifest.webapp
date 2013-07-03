@@ -1,0 +1,16 @@
+{
+	"version": "0.1",
+	"name": "Apache Cordova",
+	"description": "Tests and report APIs available on the device",
+	"launch_path": "/index.html",
+	"developer": {
+		"name": "Piotr Zalewa",
+		"url": "http://www.mozillalabs.com"
+	},
+	"icons": {
+		"256": "/style/icons/cordova_256.png",
+		"128": "/style/icons/cordova_128.png",
+		"64": "/style/icons/cordova_64.png",
+		"48": "/style/icons/cordova_48.png"
+	}
+}
