@@ -65,18 +65,21 @@
           var button = document.getElementById('accelerationButton');
           button.addEventListener('click', getAcceleration, false);
 
-          // XXX: This makes deviceready to not fire :(
-          var contacts = cordova.require('cordova/plugin/contacts');
-          var testContact = contacts.create({name: 'test name'});
-          // XXX: Content JS ERROR at app://[...]/cordova-2.6.0.js:819 in 
-          // anonymous: missing exec: Contacts.save
-          testContact.save(
-              function() {
-                alert('success');
-              }, function() {
-                alert('fail');
-              }
-          );
+          function testContact() {
+            // XXX: This makes deviceready to not fire :(
+            var contacts = cordova.require('cordova/plugin/contacts');
+            var testContact = contacts.create({name: 'test name'});
+            // XXX: Content JS ERROR at app://[...]/cordova-2.6.0.js:819 in 
+            // anonymous: missing exec: Contacts.save
+            testContact.save(
+                function() {
+                  alert('success');
+                }, function() {
+                  alert('fail');
+                }
+            );
+          }
+          document.addEventListener('deviceready', testContact, false);
         </script>
     </body>
 </html>
