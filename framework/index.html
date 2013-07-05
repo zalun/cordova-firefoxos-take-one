@@ -34,6 +34,7 @@
             </div>
             <button id="getOrientationButton">Get Orientation</button>
             <button id="vibrateButton">Vibrate</button>
+            <button id="accelerationButton">Get Acceleration</button>
         </div>
         <script type="text/javascript" src="cordova-2.6.0.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
@@ -41,18 +42,41 @@
 
           var orientation = window.cordova.require('cordova/plugin/firefoxos/orientation');
           var notification = window.cordova.require('cordova/plugin/firefoxos/notification');
+          var acceleration = window.cordova.require('cordova/plugin/firefoxos/accelerometer');
 
           function vibrate() {
             notification.vibrate(100);
-          }
+          };
 
           function getOrientation() {
             alert(orientation.getCurrentOrientation());
+          };
+
+          function getAcceleration() {
+            acceleration.start(function(result) {
+                alert(result.x);
+                acceleration.stop();
+            });
           };
           var button = document.getElementById('getOrientationButton');
           button.addEventListener('click', getOrientation, false);
           var button = document.getElementById('vibrateButton');
           button.addEventListener('click', vibrate, false);
+          var button = document.getElementById('accelerationButton');
+          button.addEventListener('click', getAcceleration, false);
+
+          // XXX: This makes deviceready to not fire :(
+          var contacts = cordova.require('cordova/plugin/contacts');
+          var testContact = contacts.create({name: 'test name'});
+          // XXX: Content JS ERROR at app://[...]/cordova-2.6.0.js:819 in 
+          // anonymous: missing exec: Contacts.save
+          testContact.save(
+              function() {
+                alert('success');
+              }, function() {
+                alert('fail');
+              }
+          );
         </script>
     </body>
 </html>

@@ -805,8 +805,9 @@ define("cordova/exec", function(require, exports, module) {
 var plugins = {
     "Device": require('cordova/plugin/firefoxos/device'),
     "NetworkStatus": require('cordova/plugin/firefoxos/network'),
-    "Accelerometer" : require('cordova/plugin/firefoxos/accelerometer')
-    //"Notification" : require('cordova/plugin/firefoxos/notification')
+    "Accelerometer" : require('cordova/plugin/firefoxos/accelerometer'),
+    // XXX: uncommented
+    "Notification" : require('cordova/plugin/firefoxos/notification')
 };
 
 module.exports = function(success, fail, service, action, args) {
@@ -4422,7 +4423,7 @@ module.exports = {
                 timestamp: motion.timestamp
             });
         };
-        window.addEventListener("devicemotion", callback);
+        window.addEventListener("devicemotion", callback, false);
     },
     stop: function (win, fail, args) {
         window.removeEventListener("devicemotion", callback);
@@ -4482,10 +4483,84 @@ module.exports = {
             console.log ("cordova/plugin/firefoxos/notification, vibrate API does not exist");
         }
     }
-
 };
 
 });
+
+// XXX: implement into cordova-js
+// file: lib/firefoxos/plugin/firefoxos/contacts.js
+define("cordova/plugin/firefoxos/contacts", function(require, exports, module) {
+
+    // somehow call this function by this:
+    // exec(success, fail, "Contacts", "save", [dupContact]);
+    // Cordova contact definition: 
+    // http://cordova.apache.org/docs/en/2.5.0/cordova_contacts_contacts.md.html#Contact
+    // FxOS contact definition:
+    // https://developer.mozilla.org/en-US/docs/Web/API/mozContact
+    function saveContact(contacts, success, fail) {
+      // success and fail will be called every time a contact is saved
+      for (var contact in contacts) {
+        var moz = new mozContact(),
+            request;
+        function exportContactFieldArray(contactFieldArray, key) {
+          if (!key) {
+            key = 'value';
+          }
+          var arr = [];
+          for (var i in contactFieldArray) {
+            arr.push(contactFieldArray[i][key]);
+          };
+          return arr;
+        }
+        function exportAddress(addresses) {
+          // TODO: check moz addresses format
+          var arr = [];
+          for (var i in addresses) {
+            var addr = {};
+            for (var key in addresses[i]) {
+              addr[key] = addresses[i][key];
+            }
+            arr.push(addr);
+          }
+          return arr;
+        }
+        
+        // prepare mozContact object
+        // TODO: find a way to link existing mozContact and Contact 
+        // (by ID?)
+        moz.init({
+          name: [contact.name.familyName, 
+                 contact.name.givenName, 
+                 contact.name.middleName, 
+                 contact.name.nickname],
+          honorificPrefix: [contact.name.honorificPrefix],
+          givenName: [contact.name.givenName],
+          familyName: [contact.name.familyName],
+          honorificSuffix: [contact.name.honorificSuffix], 
+          nickname: [contact.nickname],
+          email: exportContactFieldArray(contact.emails),
+          // photo: Blob
+          // url: Array with metadata (?)
+          category: exportContactFieldArray(contact.categories),
+          adr: exportAddress(contact.addresses),
+          tel: exportContactFieldArray(contact.phoneNumbers),
+          org: exportContactFieldArray(contact.organizations, 'name'),
+          jobTitle: exportContactFieldArray(contact.organizations, 'title'),
+          bday: contact.birthday,
+          note: contact.note,
+          // impp: exportIM(contact.ims), TODO: find the moz impp definition
+          // anniversary
+          // sex
+          // genderIdentity
+          // key
+        });
+        request = navigator.mozContacts.save(moz);
+        request.onsuccess = success;
+        request.onerror = fail;
+      }
+    }
+});
+
 
 // file: lib/firefoxos/plugin/firefoxos/orientation.js
 define("cordova/plugin/firefoxos/orientation", function(require, exports, module) {
