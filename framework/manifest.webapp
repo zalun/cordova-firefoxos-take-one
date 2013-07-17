@@ -1,6 +1,6 @@
 {
 	"version": "0.1",
-	"name": "Apache Cordova",
+	"name": "Apache Cordova Test App",
 	"description": "Tests and report APIs available on the device",
 	"launch_path": "/index.html",
 	"developer": {
@@ -12,12 +12,5 @@
 		"128": "/style/icons/cordova_128.png",
 		"64": "/style/icons/cordova_64.png",
 		"48": "/style/icons/cordova_48.png"
-	},
-    "type": "privileged",
-    "permissions": {
-		"contacts": {
-			"access": "readwrite",
-			"description": "Testing ability to work with contacts"
-		}
 	}
 }

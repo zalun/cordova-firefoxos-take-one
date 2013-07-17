@@ -26,7 +26,7 @@
         <title>Apache Cordova</title>
     </head>
     <body>
-        <div class="app">
+        <div class="app" id="cordova-app">
             <h1>Apache Cordova</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
@@ -35,51 +35,41 @@
             <button id="getOrientationButton">Get Orientation</button>
             <button id="vibrateButton">Vibrate</button>
             <button id="accelerationButton">Get Acceleration</button>
+            <button id="getPicture">Get Picture</button>
         </div>
         <script type="text/javascript" src="cordova-2.6.0.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
         <script type="text/javascript">
 
-          var orientation = window.cordova.require('cordova/plugin/firefoxos/orientation');
-          var notification = window.cordova.require('cordova/plugin/firefoxos/notification');
-          var acceleration = window.cordova.require('cordova/plugin/firefoxos/accelerometer');
+          document.addEventListener('deviceready', function() {
+              console.log('wtf');
+            var notification = window.cordova.require('cordova/plugin/firefoxos/notification');
+            var camera = window.cordova.require('cordova/plugin/firefoxos/camera');
 
-          function vibrate() {
-            notification.vibrate(100);
-          };
+            var blank = function() {};
 
-          function getOrientation() {
-            alert(orientation.getCurrentOrientation());
-          };
+            function vibrate() {
+              notification.vibrate(100);
+            };
 
-          function getAcceleration() {
-            acceleration.start(function(result) {
-                alert(result.x);
-                acceleration.stop();
-            });
-          };
-          var button = document.getElementById('getOrientationButton');
-          button.addEventListener('click', getOrientation, false);
-          var button = document.getElementById('vibrateButton');
-          button.addEventListener('click', vibrate, false);
-          var button = document.getElementById('accelerationButton');
-          button.addEventListener('click', getAcceleration, false);
-
-          function testContact() {
-            // XXX: This makes deviceready to not fire :(
-            var contacts = cordova.require('cordova/plugin/contacts');
-            var testContact = contacts.create({name: 'test name'});
-            // XXX: Content JS ERROR at app://[...]/cordova-2.6.0.js:819 in 
-            // anonymous: missing exec: Contacts.save
-            testContact.save(
-                function() {
-                  alert('success');
-                }, function() {
-                  alert('fail');
-                }
-            );
-          }
-          document.addEventListener('deviceready', testContact, false);
+            function getPicture() {
+              var body = document.getElementsByTagName('body')[0];
+              function showImage(imgSrc) { 
+                var img = document.createElement('img');
+                img.id = 'slide';
+                img.src = imgSrc;
+                body.appendChild(img);
+                img.addEventListener('click', function() {
+                    this.parentNode.removeChild(this);
+                });
+              }
+              camera.getPicture(showImage, blank, {destinationType: 1});
+            }
+            var button = document.getElementById('vibrateButton');
+            button.addEventListener('click', vibrate, false);
+            var button = document.getElementById('getPicture');
+            button.addEventListener('click', getPicture, false);
+          }, false);
         </script>
     </body>
 </html>

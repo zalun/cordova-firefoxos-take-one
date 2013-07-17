@@ -806,6 +806,8 @@ var plugins = {
     "Device": require('cordova/plugin/firefoxos/device'),
     "NetworkStatus": require('cordova/plugin/firefoxos/network'),
     "Accelerometer" : require('cordova/plugin/firefoxos/accelerometer'),
+    "Contacts": require('cordova/plugin/firefoxos/contacts'),
+
     // XXX: uncommented
     "Notification" : require('cordova/plugin/firefoxos/notification')
 };
@@ -4487,6 +4489,37 @@ module.exports = {
 
 });
 
+// XXX: implement into cordova-js
+// file: lib/firefoxos/plugin/firefoxos/camera.js
+define("cordova/plugin/firefoxos/camera", function(require, exports, module) {
+  function getPicture(cameraSuccess, cameraError, cameraOptions) {
+    cameraError = cameraError || function(){};
+    var pick = new MozActivity({
+      name: "pick",
+      data: {
+        type: ["image/png", "image/jpg", "image/jpeg"]
+      }
+    });
+    pick.onerror = cameraError;
+    pick.onsuccess = function() {
+      // image is returned as Blob in this.result.blob
+      // we need to call cameraSuccess with url or base64 encoded image
+      if (cameraOptions && cameraOptions.destinationType == 0) {
+        // TODO: base64
+        return;
+      }
+      if (!cameraOptions || !cameraOptions.destinationTyoe || cameraOptions.destinationType > 0) {
+        // url
+        return cameraSuccess(window.URL.createObjectURL(this.result.blob));
+      }
+    };
+  }
+  
+  module.exports = {
+    getPicture: getPicture,
+    cleanup: function(){}
+  };
+});
 // XXX: implement into cordova-js
 // file: lib/firefoxos/plugin/firefoxos/contacts.js
 define("cordova/plugin/firefoxos/contacts", function(require, exports, module) {
