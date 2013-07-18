@@ -4477,8 +4477,6 @@ define("cordova/plugin/firefoxos/notification", function(require, exports, modul
 module.exports = {
 
     vibrate: function(milliseconds) {
-        console.log ("milliseconds" , milliseconds);
-
         if (navigator.vibrate) {
             navigator.vibrate(milliseconds);
         } else {
@@ -6060,6 +6058,7 @@ window.cordova = require('cordova');
     }
     if (context.navigator) {
        // XXX: throws security error in FirefoxOS
+       // fixed in FxOS 1.2.0
        //context.navigator = replaceNavigator(context.navigator);
     }
 
