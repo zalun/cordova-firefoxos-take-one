@@ -6049,15 +6049,11 @@ window.cordova = require('cordova');
         // Without it, APIs such as getGamepads() break.
         if (CordovaNavigator.bind) {
             for (var key in origNavigator) {
-              if (key != 'mozTime') {
                 try {
-                  if (typeof origNavigator[key] == 'function') {
-                      newNavigator[key] = origNavigator[key].bind(origNavigator);
-                  }
-                } catch(e) {
-                  alert(key);
-                }
-              }
+                    if (typeof origNavigator[key] == 'function') {
+                        newNavigator[key] = origNavigator[key].bind(origNavigator);
+                    }
+                } catch(e) {}
             }
         }
         return newNavigator;
