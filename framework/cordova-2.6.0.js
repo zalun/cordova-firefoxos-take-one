@@ -6049,9 +6049,15 @@ window.cordova = require('cordova');
         // Without it, APIs such as getGamepads() break.
         if (CordovaNavigator.bind) {
             for (var key in origNavigator) {
-                if (typeof origNavigator[key] == 'function') {
-                    newNavigator[key] = origNavigator[key].bind(origNavigator);
+              if (key != 'mozTime') {
+                try {
+                  if (typeof origNavigator[key] == 'function') {
+                      newNavigator[key] = origNavigator[key].bind(origNavigator);
+                  }
+                } catch(e) {
+                  alert(key);
                 }
+              }
             }
         }
         return newNavigator;
@@ -6059,7 +6065,7 @@ window.cordova = require('cordova');
     if (context.navigator) {
        // XXX: throws security error in FirefoxOS
        // fixed in FxOS 1.2.0
-       //context.navigator = replaceNavigator(context.navigator);
+       context.navigator = replaceNavigator(context.navigator);
     }
 
     var channel = require("cordova/channel");
